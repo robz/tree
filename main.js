@@ -128,7 +128,7 @@
       10, 
       10000
     );
-    camera.position.set(300,100,-300);
+    camera.position.set(0,100,600);
     camera.up = new THREE.Vector3(0,1,0);
     camera.lookAt(new THREE.Vector3(10,10,10));
     scene.add(camera);
@@ -154,44 +154,44 @@
     ]
     .forEach(function (e) { scene.add(e.mesh); });
 
-    var taper = .5;
-    var base = makeBranch(makeCyl, {br: 15, tr:15*taper, h:100, parent:{mesh:scene}, shadow:true});
+    var taper = .6;
+    var base = makeBranch(makeCyl, {br: 10, tr:10*taper, h:80, parent:{mesh:scene}, shadow:true});
    
     (function addChildren(parent, numChildren, itr) {
-      if (itr <= 0) return;
-      if (itr == 1) numChildren = 1;
+      if (itr == 1) {
+        var child = makeBranch(
+          makeBox,
+          {
+            w: 10,
+            d: 1,
+            h: 10,
+            ry: Math.PI*2*Math.random(), 
+            rz: Math.PI/3*Math.random(), 
+            color: 0x00FF00,
+            shadow: true,
+            parent: parent
+          }
+        );
+
+        return;
+      }
+
       for (var i = 0; i < numChildren; i++) {
-        if (itr == 1) {
-          var child = makeBranch(
-            makeBox,
-            {
-              w: 10,
-              d: 1,
-              h: 10,
-              ry: Math.PI*2*Math.random(), 
-              rz: Math.PI/3*Math.random(), 
-              color: 0x00FF00,
-              shadow: true,
-              parent: parent
-            }
-          );
-        } else {
-          var child = makeBranch(
-            makeCyl,
-            {
-              br: parent.tr,
-              tr: parent.tr*taper,
-              h: parent.h*.66,
-              ry: Math.PI*2*Math.random(), 
-              rz: Math.PI/3*Math.random(), 
-              shadow: true,
-              parent: parent
-            }
-          );
-        }
+        var child = makeBranch(
+          makeCyl,
+          {
+            br: parent.tr,
+            tr: parent.tr*taper,
+            h: parent.h*.66,
+            ry: Math.PI*2*Math.random(), 
+            rz: Math.PI/6*(i+1)*Math.random(), 
+            shadow: true,
+            parent: parent
+          }
+        );
         addChildren(child, numChildren, itr-1);
       }
-    }(base, 3, 5));
+    }(base, 2, 7));
       
     var bottom = makeBox({w: 500, h: 3, d: 500, y:-3, color:0x00ff00});
     bottom.mesh.receiveShadow = false;
@@ -199,7 +199,7 @@
 
     controls = new THREE.OrbitControls(camera);
     controls.update();
-    controls.pan(0, HEIGHT/3);  
+    controls.pan(0, HEIGHT/5);
   }
 
   function animate() {
