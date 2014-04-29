@@ -45,70 +45,86 @@
     ]
     .forEach(function (e) { scene.add(e.mesh); });
 
+    var hsteps = 10;
     var taper = .6;
+    
     var base = GRAF.makeBranch(
       GRAF.Cylinder, 
-      {br: 10, tr:10*taper, h:80, parent:{mesh:scene}, shadow:true, color: 0x483113}
-    );
- 
-    var leaves = [];
-
-    (function addChildren(parent, numChildren, itr) {
-      if (itr == 1) {
-        leaves.push(GRAF.makeBranch(
-          GRAF.Sphere,
-          {
-            r: 1,
-            ry: Math.PI*2*Math.random(), 
-            rz: Math.PI/3*Math.random(), 
-            color: 0x00FF00,
-            shadow: true,
-            parent: parent
-          }
-        ));
-
-        return;
+      {
+        br: 10, 
+        tr:10*taper, 
+        steps: hsteps,
+        h:80, 
+        parent:{mesh:scene}, 
+        shadow:true, 
+        color: 0x483113
       }
+    );
 
-      for (var i = 0; i < numChildren; i++) {
-        addChildren(
-          GRAF.makeBranch(
+    var leaves = [];
+    leaves.push(base);
+
+    function addLeaves() {
+      var len = leaves.length;
+      
+      for (var j = 0; j < len; j++) {
+        var leaf = leaves.shift();
+        
+        for (var i = 0; i < 2; i++) { 
+          var branch = GRAF.makeBranch(
             GRAF.Cylinder,
             {
-              br: parent.tr,
-              tr: parent.tr*taper,
-              h: parent.h*.66,
+              br: leaf.tr,
+              tr: leaf.tr*taper,
+              h: leaf.h*.66,
               ry: Math.PI*2*Math.random(), 
               rz: Math.PI/6*(i+1)*Math.random(), 
               color: 0x483113, // brown
               shadow: true,
-              parent: parent
+              parent: leaf
             }
-          ),
-          numChildren, 
-          itr - 1
-        );
+          );
+          
+          var m = branch.mesh;
+          m.scale.x = m.scale.y = m.scale.z = .001;
+          
+          leaves.push(branch);
+        }
       }
-    }(base, 2, 7));
-      
+    } 
+
+    var itr = 7;
+    var itrTime = 50;
+
+    setTimeout(function f() {
+      if (itr) { 
+        itr -= 1; 
+
+        var hsteps_i = 0;
+
+        setTimeout(function g() {
+          hsteps_i += 1;
+          
+          leaves.forEach(function (e) {
+            var m = e.mesh;
+            var s = hsteps_i/hsteps;
+            m.scale.x = m.scale.y = m.scale.z = s;
+            e.setTransform();
+          });
+
+          if (hsteps_i < hsteps) {
+            setTimeout(g, itrTime);
+          } else {     
+            addLeaves();
+            setTimeout(f, 0);
+          }
+        }, 0);
+      }
+    }, itrTime);
+
     var bottom = new GRAF.Box({w: 500, h: 3, d: 500, y:-3, color:0x00ff00});
     bottom.mesh.receiveShadow = false;
     scene.add(bottom.mesh);
-
-    /*
-    var x = 1;
-
-    setInterval(function () {
-      leaves.forEach(function (e) {
-        var m = e.mesh;
-  
-        if (x < 10) {
-          m.scale.x = m.scale.y = m.scale.z = x;
-          x += 0.001;
-        }
-      });
-    }, 10);
-    */
 
     controls = new THREE.OrbitControls(camera);
     controls.update();
