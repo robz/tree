@@ -1,9 +1,10 @@
 var TREE = {};
 
-TREE.makeTree = function (parent, x, z) {
+TREE.makeTree = function (parent, x, y, z) {
   var that = {};
 
   x = x || 0;
+  y = y || 0;
   z = z || 0;
   
   var widthDecays = [.6, .5];
@@ -18,6 +19,7 @@ TREE.makeTree = function (parent, x, z) {
     GRAF.Cylinder, 
     {
       x: x,
+      y: y,
       z: z,
       br: 10, 
       tr: 10 * widthDecays[0],
