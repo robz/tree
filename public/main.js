@@ -33,8 +33,8 @@
     sun.mesh.add(spotLight);
     scene.add(sun.mesh);
 
-    var earth = new GRAF.Sphere({r:earthRad, x:0, y:0, z:0, color:0x00ff00, shadow:false, rsegs: 100});
-    earth.mat.map = THREE.ImageUtils.loadTexture('dirt.jpg');
+   var earth = new GRAF.Sphere({r:earthRad, x:0, y:0, z:0, color:0xf4a460, shadow:false, rsegs: 100});
+    earth.mat.map = THREE.ImageUtils.loadTexture('pics/dirt.jpg');
     earth.mesh.rotation.set(0,0,1);
     scene.add(earth.mesh);
 
@@ -49,7 +49,7 @@
    
     var geometry  = new THREE.SphereGeometry(10000, 32, 32)
     var material  = new THREE.MeshBasicMaterial()
-    material.map   = THREE.ImageUtils.loadTexture('deep_field.jpg')
+    material.map   = THREE.ImageUtils.loadTexture('pics/deep_field.jpg')
     material.side  = THREE.BackSide
     var mesh  = new THREE.Mesh(geometry, material)
     scene.add(mesh)
